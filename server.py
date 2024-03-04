@@ -4,12 +4,11 @@ import signal
 import sys
 
 clients = []
-client_info = {}  # To keep track of client addresses and usernames
+client_info = {}  
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 def broadcast_message(message, sender_socket=None):
     for client_socket in clients:
-        # if client_socket != sender_socket:
         try:
             client_socket.send(message.encode('utf-8'))
         except:
@@ -22,7 +21,6 @@ def handle_client(client_socket, client_address):
     broadcast_message(welcome_message)
     client_info[client_socket] = username
 
-    # Send the list of connected users to the newly connected client
     connected_users = [info for sock, info in client_info.items() if sock != client_socket]
     if len(connected_users) > 0:
         client_socket.send(f"\n\nConnected users: {', '.join(connected_users)}".encode('utf-8'))
@@ -39,7 +37,6 @@ def handle_client(client_socket, client_address):
         except:
             break
 
-    # Client has disconnected
     clients.remove(client_socket)
     broadcast_message(f"\n\n{username} has left the chat.\n\n")
     del client_info[client_socket]
@@ -57,7 +54,7 @@ def start_server():
             clients.append(client_socket)
             thread = threading.Thread(target=handle_client, args=(client_socket, client_address))
             thread.start()
-        except OSError:  # Socket is closed, exit the loop
+        except OSError:  
             break
 
 def signal_handler(sig, frame):
@@ -67,7 +64,6 @@ def signal_handler(sig, frame):
     server_socket.close()
     sys.exit(0)
 
-# Attach the signal handler for SIGINT (Ctrl+C)
 signal.signal(signal.SIGINT, signal_handler)
 
 start_server()

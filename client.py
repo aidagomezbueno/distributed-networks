@@ -9,7 +9,6 @@ class ChatClient:
         self.master = master
         self.master.title("Chat Room")
         
-        # Prompt for server IP, port, and username
         self.server_ip = simpledialog.askstring("Server IP", "Enter the server's IP:", parent=self.master)
         self.server_port = simpledialog.askinteger("Server Port", "Enter the server's port:", parent=self.master)
         self.username = simpledialog.askstring("Username", "Enter your username:", parent=self.master)
@@ -17,17 +16,13 @@ class ChatClient:
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect((self.server_ip, self.server_port))
         
-        # Send the username to the server right after connecting
         self.client_socket.send(self.username.encode('utf-8'))
         
-        # Setup the GUI
         self.setup_gui()
         
-        # Start the thread to listen for incoming messages
         threading.Thread(target=self.receive_message, daemon=True).start()
 
     def setup_gui(self):
-        # Setup the main chat window
         self.text_area = Text(self.master, state='disabled')
         self.text_area.pack(padx=20, pady=10)
         self.msg_entry = Entry(self.master)
@@ -35,10 +30,7 @@ class ChatClient:
         self.msg_entry.bind("<Return>", self.send_message)
         self.send_button = Button(self.master, text="Send", command=self.send_message)
         self.send_button.pack(pady=5)
-        # self.text_area.tag_configure('join', foreground='grey')
-        # self.text_area.tag_configure('leave', foreground='grey')
         self.text_area.tag_configure('grey', foreground='grey', justify='center')
-        # self.text_area.tag_configure('normal')
 
     def send_message(self, event=None):
         message = self.msg_entry.get()
@@ -61,7 +53,6 @@ class ChatClient:
                 print("Connection to server lost:", e)
                 break
 
-
     def display_message(self, message):
         self.text_area.config(state='normal')
         if "has joined the chat!" in message or "You're currently alone in this room." in message or "has left the chat." in message:
@@ -70,13 +61,6 @@ class ChatClient:
             self.text_area.insert(END, message + "\n")
         self.text_area.config(state='disabled')
         self.text_area.yview(END)
-        # self.text_area.config(state='normal')
-        # if "has joined the chat!" in message or "You're currently alone in this room." in message:
-        #     self.text_area.insert(END, message + "\n", 'grey')
-        # else:
-        #     self.text_area.insert(END, message + "\n")
-        # self.text_area.config(state='disabled')
-        # self.text_area.yview(END)
 
 root = Tk()
 app = ChatClient(root)
