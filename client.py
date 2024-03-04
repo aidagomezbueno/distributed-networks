@@ -7,7 +7,7 @@ import sys
 class ChatClient:
     def __init__(self, master):
         self.master = master
-        self.master.title("Chat Room")
+        self.master.title("Chat App")
         
         self.server_ip = simpledialog.askstring("Server IP", "Enter the server's IP:", parent=self.master)
         self.server_port = simpledialog.askinteger("Server Port", "Enter the server's port:", parent=self.master)
@@ -42,7 +42,7 @@ class ChatClient:
                 self.master.quit()
             else:
                 self.client_socket.send(message.encode('utf-8'))
-        except Exception as e:
+        except:
             print("Connection closed by server.")
             self.client_socket.close()
             sys.exit(0)
@@ -54,13 +54,12 @@ class ChatClient:
                 if message == '':
                     break
                 self.display_message(message)
-            except Exception as e:
-                print("Connection to server lost:", e)
+            except:
                 break
 
     def display_message(self, message):
         self.text_area.config(state='normal')
-        if "has joined the chat!" in message or "You're currently alone in this room." in message or "has left the chat." in message:
+        if "has joined the chat!" in message or "You're currently alone in this room." in message or "has left the chat" in message:
             self.text_area.insert(END, message + "\n", 'grey')
         else:
             self.text_area.insert(END, message + "\n")

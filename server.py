@@ -7,7 +7,7 @@ clients = []
 client_info = {}  
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def broadcast_message(message, sender_socket=None):
+def broadcast_message(message):
     for client_socket in clients:
         try:
             client_socket.send(message.encode('utf-8'))
@@ -31,14 +31,15 @@ def handle_client(client_socket, client_address):
         try:
             message = client_socket.recv(1024).decode('utf-8')
             if message.lower() == 'quit':
+                print(f"Connection with {client_address} closed by client")
                 break
             else:
-                broadcast_message(f"{client_address}: {message}", client_socket)
+                broadcast_message(f"{username} ({client_address[0]}:{client_address[1]}): {message}")
         except:
             break
 
     clients.remove(client_socket)
-    broadcast_message(f"\n\n{username} has left the chat.\n\n")
+    broadcast_message(f"\n\n{username} has left the chat")
     del client_info[client_socket]
     client_socket.close()
 
@@ -54,11 +55,11 @@ def start_server():
             clients.append(client_socket)
             thread = threading.Thread(target=handle_client, args=(client_socket, client_address))
             thread.start()
-        except OSError:  
+        except:  
             break
 
 def signal_handler(sig, frame):
-    print("Shutting down server...")
+    print("Clossing all connections with clients\nShutting down server...")
     for client_socket in clients:
         client_socket.close()
     server_socket.close()
