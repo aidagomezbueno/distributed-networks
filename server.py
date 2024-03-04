@@ -33,7 +33,7 @@ def handle_client(client_socket, client_address):
             if message.lower() == 'quit':
                 break
             else:
-                broadcast_message(f"{username}: {message}", client_socket)
+                broadcast_message(f"{client_address}: {message}", client_socket)
         except:
             break
 

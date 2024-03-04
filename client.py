@@ -2,7 +2,7 @@ import socket
 import threading
 from tkinter import *
 from tkinter import simpledialog
-import json
+import sys
 
 class ChatClient:
     def __init__(self, master):
@@ -35,13 +35,18 @@ class ChatClient:
     def send_message(self, event=None):
         message = self.msg_entry.get()
         self.msg_entry.delete(0, END)
-        if message.lower() == 'quit':
-            self.client_socket.send('quit'.encode('utf-8'))
+        try:
+            if message.lower() == 'quit':
+                self.client_socket.send('quit'.encode('utf-8'))
+                self.client_socket.close()
+                self.master.quit()
+            else:
+                self.client_socket.send(message.encode('utf-8'))
+        except Exception as e:
+            print("Connection closed by server.")
             self.client_socket.close()
-            self.master.quit()
-        else:
-            self.client_socket.send(message.encode('utf-8'))
-
+            sys.exit(0)
+            
     def receive_message(self):
         while True:
             try:
