@@ -46,7 +46,7 @@ The application is implemented in Python, using the following key components:
 4. Upon startup, each client will be prompted to enter the server's IP address, the port number, and a username.
 
 - To properly connect with the server:
-  - IP address: '127.0.0.1'
+  - IP address: 127.0.0.1
   - Port number = 12345
 
 ### Chatting
